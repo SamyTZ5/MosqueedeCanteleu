@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentions légales - Mosquée El Mohsinine Canteleu</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Montserrat:wght@400;500;600&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ================= VARIABLES ================= */
+        :root {
+            --primary-green: #1E5545;
+            --primary-green-rgb: 30, 85, 69;
+            --secondary-gold: #C5A059;
+            --text-dark: #2c2c2c;
+            --text-grey: #555555;
+            --bg-beige: #F2EFE9;
+            --white: #FFFFFF;
+
+            --font-title: 'Poppins', sans-serif;
+            --font-nav: 'Montserrat', sans-serif;
+            --font-body: 'Open Sans', sans-serif;
+        }
+
+        /* ================= BASES ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-body); color: var(--text-dark); background-color: var(--bg-beige); overflow-x: hidden; line-height: 1.6; }
+        h1, h2, h3, h4 { font-family: var(--font-title); font-weight: 700; color: var(--primary-green); }
+        a { text-decoration: none; transition: all 0.3s ease; }
+        ul { list-style: none; }
+        .container { width: 90%; max-width: 1200px; margin: 0 auto; }
+        .text-center { text-align: center; }
+        .section-padding { padding: 80px 0; }
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* ================= HEADER & NAV ================= */
+        .top-bar { background-color: #e8f0ed; padding: 8px 0; font-size: 0.85rem; border-bottom: 1px solid rgba(0,0,0,0.05); font-family: var(--font-nav); }
+        .top-bar-container { display: flex; justify-content: flex-end; align-items: center; gap: 20px; }
+        .top-bar a { color: var(--primary-green); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .top-bar a:hover { color: var(--secondary-gold); }
+        .top-bar .highlight { color: var(--secondary-gold); }
+
+        .site-header { background-color: rgba(255, 255, 255, 1); position: sticky; top: 0; z-index: 1000; padding: 5px 0; transition: background-color 0.4s ease, backdrop-filter 0.4s ease, box-shadow 0.4s ease; }
+        .site-header.scrolled { background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .header-container { display: flex; justify-content: space-between; align-items: center; height: 90px; }
+        .logo-center { flex: 0 0 160px; text-align: center; position: relative; z-index: 1001; }
+        .logo-center img { height: 130px; width: auto; display: block; margin: 25px auto 0; transition: height 0.3s ease; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.1)); }
+        .site-header.scrolled .logo-center img { height: 90px; margin-top: 5px; }
+
+        .nav-part { flex: 1; display: flex; align-items: center; }
+        .nav-left { justify-content: flex-end; padding-right: 30px;}
+        .nav-right { justify-content: flex-start; padding-left: 30px;}
+        .nav-part ul { display: flex; gap: 20px; align-items: center; }
+        .nav-part a { color: var(--text-dark); font-family: var(--font-nav); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; position: relative; padding: 10px 5px; display: inline-block; z-index: 1; }
+        .nav-part a.current-page { color: var(--secondary-gold); }
+
+        .nav-part a:not(.btn-nav):hover { color: var(--primary-green); }
+        .nav-part a:not(.btn-nav)::before, .nav-part a:not(.btn-nav)::after { content: ""; position: absolute; top: 50%; left: 50%; width: 35px; height: 35px; background-color: var(--secondary-gold); opacity: 0; transition: all 0.5s ease; z-index: -1; border-radius: 4px; }
+        .nav-part a:not(.btn-nav)::before { transform: translate(-50%, -50%) rotate(0deg) scale(0.5); }
+        .nav-part a:not(.btn-nav)::after { transform: translate(-50%, -50%) rotate(45deg) scale(0.5); }
+        .nav-part a:not(.btn-nav):hover::before { opacity: 0.15; transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+        .nav-part a:not(.btn-nav):hover::after { opacity: 0.15; transform: translate(-50%, -50%) rotate(45deg) scale(1); }
+
+        .burger-menu { display: none; font-size: 1.5rem; color: var(--primary-green); cursor: pointer; }
+
+        /* ================= MOBILE MENU OVERLAY ================= */
+        .mobile-nav-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--primary-green);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transform: translateX(100%);
+            transition: transform 0.4s ease-in-out;
+        }
+        .mobile-nav-overlay.active { transform: translateX(0); }
+        .close-menu {
+            position: absolute;
+            top: 30px; right: 30px;
+            font-size: 2rem;
+            color: var(--white);
+            cursor: pointer;
+        }
+        .mobile-nav-content a {
+            display: block;
+            font-family: var(--font-title);
+            font-size: 1.5rem;
+            color: var(--white);
+            margin: 18px 0;
+            text-align: center;
+            transition: color 0.3s;
+        }
+        .mobile-nav-content a:hover { color: var(--secondary-gold); }
+        .btn-mobile-don {
+            background: var(--secondary-gold);
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-weight: 700;
+            color: white !important;
+            margin-top: 30px !important;
+        }
+
+        /* ================= PAGE HEADER ================= */
+        .page-header { background-color: var(--white); padding: 50px 0 30px; text-align: center; }
+        .page-title { font-size: 2.8rem; margin-bottom: 0; text-transform: uppercase; letter-spacing: 1px; color: var(--primary-green); }
+        .page-subtitle { color: #666; margin-top: 10px; }
+
+        /* ================= CONTENT ================= */
+        .legal-layout {
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: 30px;
+            align-items: start;
+            margin-top: 35px;
+        }
+
+        .legal-nav {
+            position: sticky;
+            top: 120px;
+            background: var(--white);
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+        .legal-nav h3 { font-size: 1.1rem; margin-bottom: 15px; color: var(--text-dark); }
+        .legal-nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            color: var(--text-dark);
+            font-weight: 700;
+            font-family: var(--font-nav);
+            font-size: 0.85rem;
+        }
+        .legal-nav a:hover { background: rgba(30,85,69,0.06); color: var(--primary-green); }
+        .legal-nav .hint {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #777;
+            background: rgba(197,160,89,0.10);
+            border: 1px solid rgba(197,160,89,0.25);
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .legal-content {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 35px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .section-block { margin-bottom: 35px; }
+        .section-block:last-child { margin-bottom: 0; }
+        .section-block h2 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-block p { color: #555; margin-bottom: 12px; }
+        .muted { color: #777; font-size: 0.95rem; }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-top: 15px;
+        }
+
+        .info-chip {
+            background: var(--bg-beige);
+            border: 1px solid rgba(0,0,0,0.03);
+            border-radius: 12px;
+            padding: 16px;
+        }
+        .info-chip .label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #777;
+            margin-bottom: 6px;
+            font-family: var(--font-nav);
+        }
+        .info-chip .value {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .info-chip a { color: var(--primary-green); font-weight: 800; }
+        .info-chip a:hover { color: var(--secondary-gold); text-decoration: underline; }
+
+        .divider {
+            height: 1px;
+            background: #eee;
+            margin: 25px 0;
+        }
+
+        /* Modern "accordion" with details/summary */
+        details {
+            background: rgba(30,85,69,0.04);
+            border: 1px solid rgba(30,85,69,0.10);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-top: 12px;
+        }
+        summary {
+            cursor: pointer;
+            font-family: var(--font-title);
+            font-weight: 800;
+            color: var(--primary-green);
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        summary::-webkit-details-marker { display: none; }
+        summary .chev { color: rgba(30,85,69,0.45); transition: transform 0.2s ease; }
+        details[open] summary .chev { transform: rotate(180deg); }
+        details .content { margin-top: 12px; color: #555; }
+        .list {
+            margin: 10px 0 0 0;
+            padding-left: 18px;
+            color: #555;
+        }
+        .list li { margin-bottom: 8px; }
+
+        .update-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(197,160,89,0.12);
+            border: 1px solid rgba(197,160,89,0.25);
+            color: #6b5a2c;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-weight: 800;
+            font-family: var(--font-nav);
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        /* Footer & Donations (same as other pages) */
+        .donation-full-width { background-color: var(--primary-green); padding: 50px 0; margin-top: 0; color: var(--white); }
+        .donation-flex { display: flex; justify-content: space-between; align-items: center; gap: 40px; }
+        .donation-text h3 { color: var(--secondary-gold); font-size: 1.8rem; margin-bottom: 10px; }
+        .donation-text p { font-size: 1.1rem; max-width: 800px; font-weight: 300; }
+
+        .site-footer { background-color: #222; color: #bbb; padding: 70px 0 20px; font-size: 0.95rem; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 50px; }
+        .footer-col h3 { color: var(--white); margin-bottom: 25px; font-family: var(--font-title); font-size: 1.3rem; }
+        .footer-col li { margin-bottom: 15px; display: flex; align-items: flex-start; gap: 12px; }
+        .footer-col i { color: var(--secondary-gold); margin-top: 4px; }
+        .footer-col a { color: #bbb; }
+        .footer-col a:hover { color: var(--secondary-gold); text-decoration: underline; }
+
+        .footer-bottom { border-top: 1px solid #333; padding-top: 25px; text-align: center; font-size: 0.85rem; color: #666; }
+        .btn { padding: 12px 30px; border-radius: 30px; font-family: var(--font-nav); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 10px; }
+        .btn-white { background: white; color: var(--primary-green); padding: 15px 35px; border-radius: 30px; font-weight: 700; }
+
+        @media (max-width: 992px) {
+            .nav-left, .nav-right { display: none; }
+            .burger-menu { display: block; position: absolute; right: 20px; top: 30px; }
+            .header-container { justify-content: center; }
+            .logo-center { margin: 0; }
+            .logo-center img { height: 90px; margin-top: 0; }
+            .donation-flex { flex-direction: column; text-align: center; }
+
+            .legal-layout { grid-template-columns: 1fr; }
+            .legal-nav { position: relative; top: 0; }
+            .info-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="container top-bar-container">
+            <a href="infos.html"><i class="fas fa-envelope"></i> Contactez-nous</a>
+            <a href="infos.html#don" class="highlight"><i class="fas fa-heart"></i> Faire un don</a>
+        </div>
+    </div>
+
+    <header class="site-header">
+        <div class="container header-container">
+            <nav class="nav-part nav-left">
+                <ul>
+                    <li><a href="mosquee.html">La Mosquée</a></li>
+                    <li><a href="activites.html">Activités</a></li>
+                    <li><a href="culte.html">Le culte</a></li>
+                </ul>
+            </nav>
+
+            <div class="logo-center">
+                <a href="index.html">
+                    <img src="https://i.ibb.co/35sHFxJZ/Chat-GPT-Image-Jan-1-2026-08-58-31-PM-removebg-preview.png" alt="Logo Mosquée El Mohsinine">
+                </a>
+            </div>
+
+            <nav class="nav-part nav-right">
+                <ul>
+                    <li><a href="actus.html">Actualités</a></li>
+                    <li><a href="infos.html">Informations pratiques</a></li>
+                </ul>
+            </nav>
+
+            <div class="burger-menu"><i class="fas fa-bars"></i></div>
+        </div>
+    </header>
+
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">Mentions légales</h1>
+            <p class="page-subtitle">CGU & Politique de confidentialité</p>
+        </div>
+    </div>
+
+    <section class="section-padding" style="padding-top: 20px;">
+        <div class="container">
+
+            <div class="legal-layout reveal">
+
+                <aside class="legal-nav">
+                    <h3>Sommaire</h3>
+                    <a href="#mentions"><i class="fas fa-scale-balanced"></i> Mentions légales</a>
+                    <a href="#cgu"><i class="fas fa-file-signature"></i> Conditions d'utilisation</a>
+                    <a href="#confidentialite"><i class="fas fa-shield-halved"></i> Politique de confidentialité</a>
+                    <a href="#don"><i class="fas fa-heart"></i> Faire un don</a>
+
+                    <div class="hint">
+                        <strong><i class="fas fa-circle-info"></i> Bon à savoir</strong><br>
+                        Cette page regroupe les informations légales, les règles d'utilisation du site et la politique de confidentialité.
+                    </div>
+                </aside>
+
+                <main class="legal-content">
+
+                    <div id="mentions" class="section-block">
+                        <h2><i class="fas fa-scale-balanced"></i> Mentions légales</h2>
+                        <p class="muted">
+                            Conformément aux dispositions légales et réglementaires applicables, vous trouverez ci-dessous les informations relatives à l’éditeur et à l’hébergement du site.
+                        </p>
+
+                        <div class="info-grid">
+                            <div class="info-chip">
+                                <div class="label">Association</div>
+                                <div class="value">AMCC – Mosquée El Mohsinine Canteleu</div>
+                            </div>
+                            <div class="info-chip">
+                                <div class="label">Adresse</div>
+                                <div class="value">34 Anc. Rte de Duclair G, 76380 Canteleu</div>
+                            </div>
+                            <div class="info-chip">
+                                <div class="label">Téléphone</div>
+                                <div class="value"><a href="tel:0235072622">02 35 07 26 22</a></div>
+                            </div>
+                            <div class="info-chip">
+                                <div class="label">Email</div>
+                                <div class="value"><a href="mailto:mosquee.amcc@gmail.com">mosquee.amcc@gmail.com</a></div>
+                            </div>
+                            <div class="info-chip">
+                                <div class="label">Directeur de la publication</div>
+                                <div class="value">Samy TAHIRI</div>
+                            </div>
+                            <div class="info-chip">
+                                <div class="label">Hébergeur</div>
+                                <div class="value">Webflow, Inc. – 398 11th Street, 94103 San Francisco, États-Unis<br>contact@webflow.com</div>
+                            </div>
+                        </div>
+
+                        <div class="update-badge">
+                            <i class="fas fa-rotate"></i>
+                            Dernière mise à jour : 01 janvier 2026
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div id="cgu" class="section-block">
+                        <h2><i class="fas fa-file-signature"></i> Conditions générales d'utilisation</h2>
+                        <p>
+                            En utilisant le site web de l’AMCC – Mosquée El Mohsinine Canteleu, vous acceptez les présentes conditions générales d’utilisation. Si vous n’êtes pas d’accord avec ces conditions, veuillez ne pas utiliser ce site.
+                        </p>
+
+                        <details>
+                            <summary>
+                                Propriété intellectuelle
+                                <span class="chev"><i class="fas fa-chevron-down"></i></span>
+                            </summary>
+                            <div class="content">
+                                <p>
+                                    Le contenu du site (textes, images, logos, vidéos, éléments graphiques et documents) est protégé par les lois relatives à la propriété intellectuelle.
+                                    Toute reproduction, représentation, adaptation, modification ou diffusion, totale ou partielle, sans autorisation écrite préalable de l’AMCC, est interdite.
+                                </p>
+                            </div>
+                        </details>
+
+                        <details>
+                            <summary>
+                                Utilisation du site web
+                                <span class="chev"><i class="fas fa-chevron-down"></i></span>
+                            </summary>
+                            <div class="content">
+                                <p>
+                                    Vous êtes autorisé à utiliser ce site pour un usage personnel et non commercial. Vous vous engagez à ne pas utiliser ce site pour des activités illégales,
+                                    frauduleuses ou nuisibles, et à ne pas tenter d’accéder à des zones non destinées au public.
+                                </p>
+                            </div>
+                        </details>
+
+                        <details>
+                            <summary>
+                                Liens vers d'autres sites
+                                <span class="chev"><i class="fas fa-chevron-down"></i></span>
+                            </summary>
+                            <div class="content">
+                                <p>
+                                    Le site peut contenir des liens vers des sites tiers. L’AMCC n’est pas responsable du contenu de ces sites, ni des pratiques de confidentialité appliquées par ces tiers.
+                                    Il est recommandé de consulter leurs politiques de confidentialité et conditions d’utilisation.
+                                </p>
+                            </div>
+                        </details>
+
+                        <details>
+                            <summary>
+                                Limitation de responsabilité
+                                <span class="chev"><i class="fas fa-chevron-down"></i></span>
+                            </summary>
+                            <div class="content">
+                                <p>
+                                    L’AMCC ne pourra être tenue responsable des dommages directs ou indirects résultant de l’utilisation du site, ou de l’impossibilité de l’utiliser.
+                                    Les informations publiées sont fournies à titre indicatif et peuvent être modifiées à tout moment.
+                                </p>
+                            </div>
+                        </details>
+
+                        <details>
+                            <summary>
+                                Modification des CGU & loi applicable
+                                <span class="chev"><i class="fas fa-chevron-down"></i></span>
+                            </summary>
+                            <div class="content">
+                                <p>
+                                    L’AMCC se réserve le droit de modifier les présentes conditions à tout moment et sans préavis. La consultation régulière de cette page est recommandée.
+                                </p>
+                                <p>
+                                    Les présentes conditions sont régies par les lois françaises. Tout litige relatif à l’utilisation du site relève de la compétence des tribunaux français.
+                                </p>
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div id="confidentialite" class="section-block">
+                        <h2><i class="fas fa-shield-halved"></i> Politique de confidentialité</h2>
+                        <p>
+                            L’AMCC – Mosquée El Mohsinine Canteleu s’engage à protéger la vie privée de ses membres et des utilisateurs du site. La présente politique explique comment nous collectons,
+                            utilisons, protégeons et, le cas échéant, partageons certaines informations.
+                        </p>
+
+                        <details open>
+                            <summary>
+                                Collecte et utilisation des informations
+                                <span class="chev"><i class="fas fa-chevron-down"></i></span>
+                            </summary>
+                            <div class="content">
+                                <p>
+                                    Nous pouvons collecter des informations lorsque vous nous contactez, lorsque vous vous inscrivez à une activité, ou lorsque vous interagissez avec le site.
+                                    Les données susceptibles d’être collectées incluent notamment : nom, adresse e-mail, numéro de téléphone, et toute information transmise volontairement via un message.
+                                </p>
+                                <p>
+                                    Ces informations sont utilisées pour : répondre à vos demandes, communiquer sur les activités et événements, et assurer le bon fonctionnement administratif de l’association.
+                                </p>
+                            </div>
+                        </details>
+
+                        <details>
+                            <summary>
+                                Divulgation à des tiers
+                                <span class="chev"><i class="fas fa-chevron-down"></i></span>
+                            </summary>
+                            <div class="content">
+                                <p>
+                                    L’AMCC ne vend ni ne loue vos informations personnelles. Une divulgation peut toutefois être effectuée si la loi l’exige,
+                                    ou si cela est nécessaire pour protéger nos droits, votre sécurité ou celle de tiers.
+                                </p>
+                            </div>
+                        </details>
+
+                        <details>
+                            <summary>
+                                Sécurité des informations
+                                <span class="chev"><i class="fas fa-chevron-down"></i></span>
+                            </summary>
+                            <div class="content">
+                                <p>
+                                    Nous mettons en œuvre des mesures de sécurité raisonnables pour protéger les données contre la perte, l’accès non autorisé, la divulgation ou l’altération.
+                                    Malgré nos efforts, aucune méthode de transmission ou de stockage n’est totalement infaillible.
+                                </p>
+                            </div>
+                        </details>
+
+                        <details>
+                            <summary>
+                                Cookies
+                                <span class="chev"><i class="fas fa-chevron-down"></i></span>
+                            </summary>
+                            <div class="content">
+                                <p>
+                                    Le site peut utiliser des cookies pour améliorer l’expérience utilisateur et comprendre l’usage du site. Vous pouvez configurer votre navigateur pour refuser
+                                    tout ou partie des cookies. Certaines fonctionnalités peuvent toutefois être dégradées.
+                                </p>
+                            </div>
+                        </details>
+
+                        <details>
+                            <summary>
+                                Vos droits (accès, rectification, suppression)
+                                <span class="chev"><i class="fas fa-chevron-down"></i></span>
+                            </summary>
+                            <div class="content">
+                                <p>
+                                    Vous pouvez demander l’accès, la correction ou la suppression de vos informations personnelles, ainsi que la limitation ou l’opposition au traitement lorsque cela s’applique.
+                                    Pour exercer vos droits, contactez-nous :
+                                </p>
+                                <ul class="list">
+                                    <li>Par e-mail : <a href="mailto:mosquee.amcc@gmail.com">mosquee.amcc@gmail.com</a></li>
+                                    <li>Par téléphone : <a href="tel:0235072622">02 35 07 26 22</a></li>
+                                </ul>
+                            </div>
+                        </details>
+
+                        <details>
+                            <summary>
+                                Modifications de la politique
+                                <span class="chev"><i class="fas fa-chevron-down"></i></span>
+                            </summary>
+                            <div class="content">
+                                <p>
+                                    Nous pouvons mettre à jour cette politique de confidentialité. Toute modification sera publiée sur cette page.
+                                </p>
+                                <p class="muted"><strong>Date de dernière mise à jour :</strong> 01 janvier 2026</p>
+                            </div>
+                        </details>
+                    </div>
+
+                </main>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="don" class="donation-full-width reveal">
+        <div class="container donation-flex">
+            <div class="donation-text">
+                <h3>Vous souhaitez effectuer un don ?</h3>
+                <p>Votre don est une contribution essentielle pour nous aider à maintenir notre Mosquée et à continuer de servir au mieux la communauté. Nous vous remercions de votre générosité.</p>
+            </div>
+            <div class="donation-btn">
+                <a href="infos.html#don" class="btn btn-white">FAIRE UN DON <i class="fas fa-arrow-right" style="margin-left:10px;"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <div class="mobile-nav-overlay" id="mobileNav">
+        <div class="close-menu" id="closeMenu"><i class="fas fa-times"></i></div>
+        <div class="mobile-nav-content">
+            <a href="mosquee.html">La Mosquée</a>
+            <a href="activites.html">Activités</a>
+            <a href="culte.html">Le Culte</a>
+            <a href="actus.html">Actualités</a>
+            <a href="infos.html">Infos Pratiques</a>
+            <a href="mentions-legales.html">Mentions légales</a>
+            <a href="infos.html#don" class="btn-mobile-don">Faire un don</a>
+        </div>
+    </div>
+
+    <footer id="contact" class="site-footer reveal">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <h3>À propos</h3>
+                <p>Mosquée El Mohsinine de Canteleu.<br>Lieu de culte, d'échange et de fraternité.</p>
+                <br>
+                <img src="https://i.ibb.co/35sHFxJZ/Chat-GPT-Image-Jan-1-2026-08-58-31-PM-removebg-preview.png" alt="Logo Footer" style="width: 100px; opacity: 0.8;">
+            </div>
+
+            <div class="footer-col">
+                <h3>Contactez-nous</h3>
+                <ul>
+                    <li><i class="fas fa-phone-alt"></i> 02 35 07 26 22</li>
+                    <li><i class="fas fa-envelope"></i> mosquee.amcc@gmail.com</li>
+                    <li><i class="fas fa-map-marker-alt"></i> 34 Anc. Rte de Duclair G,<br>76380 Canteleu</li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>Liens rapides</h3>
+                <ul>
+                    <li><a href="infos.html#don">Faire un don</a></li>
+                    <li><a href="culte.html">Horaires Mawaqit</a></li>
+                    <li><a href="mentions-legales.html">Mentions légales</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 AMCC – Mosquée El Mohsinine Canteleu. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        // SCROLL REVEAL
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.15 });
+
+        revealElements.forEach((el) => {
+            revealObserver.observe(el);
+        });
+
+        // HEADER SCROLL
+        const header = document.querySelector('.site-header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+        });
+
+        // MENU MOBILE
+        const burgerMenu = document.querySelector('.burger-menu');
+        const mobileNav = document.getElementById('mobileNav');
+        const closeMenu = document.getElementById('closeMenu');
+
+        if (burgerMenu) burgerMenu.addEventListener('click', () => mobileNav.classList.add('active'));
+        if (closeMenu) closeMenu.addEventListener('click', () => mobileNav.classList.remove('active'));
+
+        document.querySelectorAll('.mobile-nav-content a').forEach(link => {
+            link.addEventListener('click', () => mobileNav.classList.remove('active'));
+        });
+    </script>
+</body>
+</html>
