@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Culte - Mosquée El Mohsinine Canteleu</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Montserrat:wght@400;500;600&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ================= VARIABLES ================= */
+        :root {
+            --primary-green: #1E5545;
+            --primary-green-rgb: 30, 85, 69; 
+            --secondary-gold: #C5A059;
+            --text-dark: #2c2c2c;
+            --text-grey: #555555;
+            --bg-beige: #F2EFE9;
+            --white: #FFFFFF;
+            
+            --font-title: 'Poppins', sans-serif;
+            --font-nav: 'Montserrat', sans-serif;
+            --font-body: 'Open Sans', sans-serif;
+        }
+
+        /* ================= BASES ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-body); color: var(--text-dark); background-color: var(--bg-beige); overflow-x: hidden; line-height: 1.6; }
+        h1, h2, h3, h4 { font-family: var(--font-title); font-weight: 700; color: var(--primary-green); }
+        a { text-decoration: none; transition: all 0.3s ease; }
+        ul { list-style: none; }
+        .container { width: 90%; max-width: 1200px; margin: 0 auto; }
+        .text-center { text-align: center; }
+        .section-padding { padding: 80px 0; }
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* ================= HEADER & NAV ================= */
+        .top-bar { background-color: #e8f0ed; padding: 8px 0; font-size: 0.85rem; border-bottom: 1px solid rgba(0,0,0,0.05); font-family: var(--font-nav); }
+        .top-bar-container { display: flex; justify-content: flex-end; align-items: center; gap: 20px; }
+        .top-bar a { color: var(--primary-green); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .top-bar a:hover { color: var(--secondary-gold); }
+        .top-bar .highlight { color: var(--secondary-gold); }
+
+        .site-header { background-color: rgba(255, 255, 255, 1); position: sticky; top: 0; z-index: 1000; padding: 5px 0; transition: background-color 0.4s ease, backdrop-filter 0.4s ease, box-shadow 0.4s ease; }
+        .site-header.scrolled { background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .header-container { display: flex; justify-content: space-between; align-items: center; height: 90px; }
+        .logo-center { flex: 0 0 160px; text-align: center; position: relative; z-index: 1001; }
+        .logo-center img { height: 130px; width: auto; display: block; margin: 25px auto 0; transition: height 0.3s ease; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.1)); }
+        .site-header.scrolled .logo-center img { height: 90px; margin-top: 5px; }
+
+        .nav-part { flex: 1; display: flex; align-items: center; }
+        .nav-left { justify-content: flex-end; padding-right: 30px;} 
+        .nav-right { justify-content: flex-start; padding-left: 30px;}
+        .nav-part ul { display: flex; gap: 20px; align-items: center; }
+        .nav-part a { color: var(--text-dark); font-family: var(--font-nav); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; position: relative; padding: 10px 5px; display: inline-block; z-index: 1; }
+        .nav-part a.current-page { color: var(--secondary-gold); }
+
+        .nav-part a:not(.btn-nav):hover { color: var(--primary-green); }
+        .nav-part a:not(.btn-nav)::before, .nav-part a:not(.btn-nav)::after { content: ""; position: absolute; top: 50%; left: 50%; width: 35px; height: 35px; background-color: var(--secondary-gold); opacity: 0; transition: all 0.5s ease; z-index: -1; border-radius: 4px; }
+        .nav-part a:not(.btn-nav)::before { transform: translate(-50%, -50%) rotate(0deg) scale(0.5); }
+        .nav-part a:not(.btn-nav)::after { transform: translate(-50%, -50%) rotate(45deg) scale(0.5); }
+        .nav-part a:not(.btn-nav):hover::before { opacity: 0.15; transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+        .nav-part a:not(.btn-nav):hover::after { opacity: 0.15; transform: translate(-50%, -50%) rotate(45deg) scale(1); }
+        .burger-menu { display: none; font-size: 1.5rem; color: var(--primary-green); cursor: pointer; }
+
+        /* ================= MOBILE MENU OVERLAY ================= */
+        .mobile-nav-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--primary-green);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transform: translateX(100%);
+            transition: transform 0.4s ease-in-out;
+        }
+        .mobile-nav-overlay.active {
+            transform: translateX(0);
+        }
+        .close-menu {
+            position: absolute;
+            top: 30px; right: 30px;
+            font-size: 2rem;
+            color: var(--white);
+            cursor: pointer;
+        }
+        .mobile-nav-content a {
+            display: block;
+            font-family: var(--font-title);
+            font-size: 1.5rem;
+            color: var(--white);
+            margin: 20px 0;
+            text-align: center;
+            transition: color 0.3s;
+        }
+        .mobile-nav-content a:hover { color: var(--secondary-gold); }
+        .btn-mobile-don {
+            background: var(--secondary-gold);
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-weight: 700;
+            color: white !important;
+            margin-top: 30px !important;
+        }
+
+        /* ================= CSS SPÉCIFIQUE PAGE CULTE ================= */
+        
+        .page-header { background-color: var(--white); padding: 50px 0 30px; text-align: center; }
+        .page-title { font-size: 2.8rem; margin-bottom: 0; text-transform: uppercase; letter-spacing: 1px; color: var(--primary-green); }
+
+        /* GRID JUMUA & MAWAQIT */
+        .prayer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 50px;
+            align-items: start;
+        }
+
+        /* Jumu'a Styling */
+        .jumua-box {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            height: 100%;
+        }
+        .season-block {
+            background-color: var(--bg-beige);
+            border-left: 5px solid var(--primary-green);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s;
+        }
+        .season-block:hover { transform: translateX(5px); }
+        .season-icon {
+            font-size: 2rem;
+            color: var(--secondary-gold);
+            width: 50px;
+            text-align: center;
+        }
+        .season-info h4 { margin-bottom: 5px; font-size: 1.1rem; }
+        .season-time { font-size: 1.5rem; font-weight: 700; color: var(--text-dark); }
+
+        /* Mawaqit Styling */
+        iframe.mawaqit-wide {
+            width: 100%;
+            height: 550px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
+        }
+
+        /* RAMADAN Section */
+        .ramadan-card {
+            background: linear-gradient(135deg, #1E5545 0%, #154034 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+        .ramadan-card::after {
+            content: "\f6d1";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: -20px;
+            bottom: -30px;
+            font-size: 150px;
+            color: rgba(255,255,255,0.05);
+            transform: rotate(-15deg);
+        }
+        .ramadan-card h3 { color: var(--secondary-gold); }
+        .ramadan-content { position: relative; z-index: 1; }
+        .ramadan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+        .ramadan-item { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; backdrop-filter: blur(5px); }
+
+        /* JANAZA Section */
+        .janaza-section {
+            background-color: var(--white);
+            padding: 60px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .step-card {
+            background: var(--bg-beige);
+            padding: 30px;
+            border-radius: 10px;
+            border-top: 4px solid var(--text-grey);
+        }
+        .step-card.urgent { border-top-color: #d9534f; }
+        .step-title { font-weight: 700; margin-bottom: 15px; display: block; font-size: 1.1rem; }
+        .contact-box {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+
+        /* Footer & Donations */
+        .donation-full-width { background-color: var(--primary-green); padding: 50px 0; margin-top: 0; color: var(--white); }
+        .donation-flex { display: flex; justify-content: space-between; align-items: center; gap: 40px; }
+        .donation-text h3 { color: var(--secondary-gold); font-size: 1.8rem; margin-bottom: 10px; }
+        .donation-text p { font-size: 1.1rem; max-width: 800px; font-weight: 300; }
+        .site-footer { background-color: #222; color: #bbb; padding: 70px 0 20px; font-size: 0.95rem; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 50px; }
+        .footer-col h3 { color: var(--white); margin-bottom: 25px; font-family: var(--font-title); font-size: 1.3rem; }
+        .footer-col li { margin-bottom: 15px; display: flex; align-items: flex-start; gap: 12px; }
+        .footer-col i { color: var(--secondary-gold); margin-top: 4px; }
+        .footer-bottom { border-top: 1px solid #333; padding-top: 25px; text-align: center; font-size: 0.85rem; color: #666; }
+        .btn-white { background:white; color:var(--primary-green); padding: 15px 35px; border-radius:30px; font-weight:700; }
+
+        @media (max-width: 992px) {
+            .nav-left, .nav-right { display: none; }
+            .burger-menu { display: block; position: absolute; right: 20px; top: 30px; }
+            .header-container { justify-content: center; }
+            .logo-center { margin: 0; }
+            .logo-center img { height: 90px; margin-top: 0; }
+            .prayer-grid { grid-template-columns: 1fr; }
+            .ramadan-grid { grid-template-columns: 1fr; }
+            .donation-flex { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="container top-bar-container">
+            <a href="infos.html"><i class="fas fa-envelope"></i> Contactez-nous</a>
+            <a href="infos.html#don" class="highlight"><i class="fas fa-heart"></i> Faire un don</a>
+        </div>
+    </div>
+
+    <header class="site-header">
+        <div class="container header-container">
+            <nav class="nav-part nav-left">
+                <ul>
+                    <li><a href="mosquee.html">La Mosquée</a></li>
+                    <li><a href="activites.html">Activités</a></li>
+                    <li><a href="culte.html" class="current-page">Le culte</a></li>
+                </ul>
+            </nav>
+
+            <div class="logo-center">
+                <a href="index.html">
+                    <img src="https://i.ibb.co/35sHFxJZ/Chat-GPT-Image-Jan-1-2026-08-58-31-PM-removebg-preview.png" alt="Logo Mosquée El Mohsinine">
+                </a>
+            </div>
+
+            <nav class="nav-part nav-right">
+                <ul>
+                    <li><a href="actus.html">Actualités</a></li>
+                    <li><a href="infos.html">Informations pratiques</a></li>
+                </ul>
+            </nav>
+            <div class="burger-menu"><i class="fas fa-bars"></i></div>
+        </div>
+    </header>
+
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">Le Culte & La Pratique</h1>
+        </div>
+    </div>
+
+    <section class="section-padding" style="padding-top: 20px;">
+        <div class="container">
+            
+            <div class="prayer-grid reveal">
+                
+                <div class="jumua-box">
+                    <h2 style="margin-bottom: 30px; font-size: 1.8rem;">La Prière du Vendredi <br><span style="color:var(--secondary-gold); font-size:1.2rem;">(Salat Jumu'a)</span></h2>
+                    <p style="margin-bottom: 30px; color: #666;">
+                        La prière du vendredi est un moment de rassemblement essentiel. Afin d'accueillir les fidèles dans les meilleures conditions, voici les horaires du discours (Khutba).
+                    </p>
+
+                    <div class="season-block">
+                        <div class="season-icon"><i class="far fa-snowflake"></i></div>
+                        <div class="season-info">
+                            <h4>Horaire d'Hiver</h4>
+                            <div class="season-time">13h00</div>
+                            <small>Début du discours</small>
+                        </div>
+                    </div>
+
+                    <div class="season-block">
+                        <div class="season-icon"><i class="far fa-sun"></i></div>
+                        <div class="season-info">
+                            <h4>Horaire d'Été</h4>
+                            <div class="season-time">14h00</div>
+                            <small>Début du discours</small>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px; font-size: 0.9rem; color: #888; font-style: italic;">
+                        <i class="fas fa-info-circle"></i> Merci de respecter les règles de stationnement aux abords de la mosquée.
+                    </div>
+                </div>
+
+                <div class="mawaqit-wrapper">
+                    <iframe class="mawaqit-wide" src="https://mawaqit.net/fr/m/el-mohsinine-canteleu" frameborder="0" scrolling="no"></iframe>
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #ddd; margin: 60px 0;">
+
+            <div class="ramadan-card reveal">
+                <div class="ramadan-content">
+                    <h3><i class="fas fa-moon"></i> Le Mois de Ramadan</h3>
+                    <p>Mois de jeûne, de prière et de partage, la mosquée adapte son organisation pour vous accompagner.</p>
+                    
+                    <div class="ramadan-grid">
+                        <div class="ramadan-item">
+                            <h4 style="color:white; margin-bottom:10px;">Salat Tarawih</h4>
+                            <p style="font-size:0.95rem;">Organisées chaque soir après la prière de l'Isha. Des lecteurs sont invités pour la clôture du Coran.</p>
+                        </div>
+                        <div class="ramadan-item">
+                            <h4 style="color:white; margin-bottom:10px;">Iftar & Partage</h4>
+                            <p style="font-size:0.95rem;">Organisation de repas de rupture du jeûne pour les célibataires et les nécessiteux.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal">
+                <h2 class="text-center" style="margin-bottom: 10px;">Obsèques & Janaza</h2>
+                <p class="text-center" style="color: #666; margin-bottom: 40px;">Accompagnement et procédures en cas de décès.</p>
+                
+                <div class="janaza-section">
+                    <div class="steps-grid">
+                        
+                        <div class="step-card urgent">
+                            <span class="step-title"><i class="fas fa-phone-alt"></i> 1. Contactez la Mosquée</span>
+                            <p>En cas de décès, la première étape est d'informer le bureau de la mosquée pour l'organisation religieuse.</p>
+                            <div class="contact-box">
+                                <strong>Bureau Association :</strong><br>
+                                02 35 07 26 22<br>
+                                mosquee.amcc@gmail.com
+                            </div>
+                        </div>
+
+                        <div class="step-card">
+                            <span class="step-title"><i class="fas fa-hands-wash"></i> 2. Lavage & Démarches</span>
+                            <p>Pour le lavage mortuaire et les démarches administratives, vous pouvez contacter les pompes funèbres.</p>
+                            <div class="contact-box">
+                                <strong>Malek Pompes Funèbres :</strong><br>
+                                Tél : 02 35 72 30 XX<br>
+                                Fax : 02 18 46 00 49
+                            </div>
+                        </div>
+
+                        <div class="step-card">
+                            <span class="step-title"><i class="fas fa-map-marker-alt"></i> 3. Inhumation</span>
+                            <p>Informations concernant le carré musulman.</p>
+                            <div class="contact-box">
+                                <strong>Carré Musulman :</strong><br>
+                                Cimetière de Canteleu / Rouen.<br>
+                                <em>Rapprochez-vous du bureau pour les disponibilités.</em>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="don" class="donation-full-width reveal">
+        <div class="container donation-flex">
+            <div class="donation-text">
+                <h3>Vous souhaitez effectuer un don ?</h3>
+                <p>Votre don est une contribution essentielle pour nous aider à maintenir notre Mosquée et à continuer de servir au mieux la communauté. Nous vous remercions de votre générosité.</p>
+            </div>
+            <div class="donation-btn">
+                <a href="infos.html#don" class="btn btn-white">FAIRE UN DON <i class="fas fa-arrow-right" style="margin-left:10px;"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <div class="mobile-nav-overlay" id="mobileNav">
+        <div class="close-menu" id="closeMenu"><i class="fas fa-times"></i></div>
+        <div class="mobile-nav-content">
+            <a href="mosquee.html">La Mosquée</a>
+            <a href="activites.html">Activités</a>
+            <a href="culte.html">Le Culte</a>
+            <a href="actus.html">Actualités</a>
+            <a href="infos.html">Infos Pratiques</a>
+            <a href="infos.html#don" class="btn-mobile-don">Faire un don</a>
+        </div>
+    </div>
+
+    <footer id="contact" class="site-footer reveal">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <h3>À propos</h3>
+                <p>Mosquée El Mohsinine de Canteleu.<br>Lieu de culte, d'échange et de fraternité.</p>
+                <br>
+                <img src="https://i.ibb.co/35sHFxJZ/Chat-GPT-Image-Jan-1-2026-08-58-31-PM-removebg-preview.png" alt="Logo Footer" style="width: 100px; opacity: 0.8;">
+            </div>
+            
+            <div class="footer-col">
+                <h3>Contactez-nous</h3>
+                <ul>
+                    <li><i class="fas fa-phone-alt"></i> 02 35 07 26 22</li>
+                    <li><i class="fas fa-envelope"></i> mosquee.amcc@gmail.com</li>
+                    <li><i class="fas fa-map-marker-alt"></i> 34 Anc. Rte de Duclair G,<br>76380 Canteleu</li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>Liens rapides</h3>
+                <ul>
+                    <li><a href="infos.html#don">Faire un don</a></li>
+                    <li><a href="culte.html">Horaires Mawaqit</a></li>
+                    <li><a href="infos.html">Mentions légales</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 Association Mosquée El Mohsinine Canteleu. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        // SCROLL REVEAL
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.15 });
+
+        revealElements.forEach((el) => {
+            revealObserver.observe(el);
+        });
+
+        // HEADER SCROLL
+        const header = document.querySelector('.site-header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // MENU MOBILE INTERACTIF
+        const burgerMenu = document.querySelector('.burger-menu');
+        const mobileNav = document.getElementById('mobileNav');
+        const closeMenu = document.getElementById('closeMenu');
+
+        if(burgerMenu) {
+            burgerMenu.addEventListener('click', () => {
+                mobileNav.classList.add('active');
+            });
+        }
+
+        if(closeMenu) {
+            closeMenu.addEventListener('click', () => {
+                mobileNav.classList.remove('active');
+            });
+        }
+        
+        // Fermer le menu si on clique sur un lien
+        document.querySelectorAll('.mobile-nav-content a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNav.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>
