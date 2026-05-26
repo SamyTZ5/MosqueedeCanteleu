@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Administration — Mosquée El Mohsinine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --green:   #1E5545;
+      --green-l: #2a6b56;
+      --gold:    #C5A059;
+      --gold-l:  #d4b06a;
+      --red:     #dc3545;
+      --orange:  #fd7e14;
+      --teal:    #28a745;
+      --bg:      #f4f6f8;
+      --white:   #fff;
+      --border:  #e2e8f0;
+      --text:    #2d3748;
+      --grey:    #718096;
+      --r:       12px;
+      --shadow:  0 4px 20px rgba(0,0,0,.08);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Open Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+    h1,h2,h3,h4 { font-family:'Poppins',sans-serif; }
+
+    /* ── LOGIN ── */
+    #login-screen {
+      min-height:100vh; display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(135deg, var(--green) 0%, #164035 100%);
+    }
+    .login-box {
+      background:var(--white); border-radius:20px; padding:48px 42px;
+      width:100%; max-width:420px; box-shadow:0 20px 60px rgba(0,0,0,.25);
+      text-align:center;
+    }
+    .login-logo { width:90px; margin:0 auto 20px; }
+    .login-box h1 { font-size:1.4rem; color:var(--green); margin-bottom:5px; }
+    .login-box p { color:var(--grey); font-size:.9rem; margin-bottom:30px; }
+    .form-group { margin-bottom:18px; text-align:left; }
+    .form-group label { display:block; font-size:.82rem; font-weight:600; color:var(--grey); margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px; }
+    .form-group input {
+      width:100%; padding:13px 16px; border:2px solid var(--border);
+      border-radius:var(--r); font-size:.97rem; font-family:inherit;
+      transition:.25s; outline:none; color:var(--text);
+    }
+    .form-group input:focus { border-color:var(--green); }
+    .btn-login {
+      width:100%; padding:14px; background:linear-gradient(135deg,var(--green),var(--green-l));
+      color:#fff; border:none; border-radius:var(--r); font-family:'Poppins',sans-serif;
+      font-weight:700; font-size:1rem; cursor:pointer; transition:.25s; margin-top:6px;
+    }
+    .btn-login:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(30,85,69,.35); }
+    .login-error { background:#fff5f5; color:var(--red); padding:11px 16px; border-radius:var(--r); font-size:.88rem; margin-bottom:16px; border-left:4px solid var(--red); display:none; }
+
+    /* ── DASHBOARD ── */
+    #dashboard { display:none; min-height:100vh; }
+
+    /* Sidebar */
+    .sidebar {
+      position:fixed; top:0; left:0; width:260px; height:100vh;
+      background:linear-gradient(180deg,var(--green),#164035);
+      color:#fff; display:flex; flex-direction:column; z-index:100;
+      box-shadow:4px 0 20px rgba(0,0,0,.15);
+    }
+    .sidebar-logo { padding:28px 24px; border-bottom:1px solid rgba(255,255,255,.1); }
+    .sidebar-logo img { width:60px; margin-bottom:10px; }
+    .sidebar-logo h2 { font-size:1rem; color:#fff; line-height:1.3; }
+    .sidebar-logo p { font-size:.78rem; color:rgba(255,255,255,.6); margin-top:3px; }
+    .sidebar-nav { flex:1; padding:20px 12px; }
+    .sidebar-nav .nav-section { font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:rgba(255,255,255,.4); padding:16px 12px 8px; }
+    .sidebar-nav a {
+      display:flex; align-items:center; gap:12px; padding:11px 14px;
+      color:rgba(255,255,255,.75); border-radius:10px; font-size:.9rem;
+      font-weight:600; transition:.2s; cursor:pointer; margin-bottom:3px;
+      text-decoration:none;
+    }
+    .sidebar-nav a:hover { background:rgba(255,255,255,.1); color:#fff; }
+    .sidebar-nav a.active { background:rgba(255,255,255,.15); color:#fff; }
+    .sidebar-nav a i { width:18px; text-align:center; color:var(--gold); }
+    .sidebar-bottom { padding:20px; border-top:1px solid rgba(255,255,255,.1); }
+    .user-info { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+    .user-avatar { width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.15); display:flex; align-items:center; justify-content:center; font-size:1rem; color:var(--gold); }
+    .user-name { font-size:.88rem; font-weight:600; color:#fff; }
+    .user-role { font-size:.75rem; color:rgba(255,255,255,.55); }
+    .btn-logout { width:100%; padding:10px; background:rgba(255,255,255,.08); color:rgba(255,255,255,.8); border:1px solid rgba(255,255,255,.15); border-radius:var(--r); font-family:inherit; font-size:.85rem; cursor:pointer; transition:.2s; }
+    .btn-logout:hover { background:rgba(255,255,255,.15); color:#fff; }
+
+    /* Main content */
+    .main { margin-left:260px; min-height:100vh; }
+    .topbar { background:var(--white); padding:18px 32px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .topbar h1 { font-size:1.3rem; color:var(--green); }
+    .topbar-actions { display:flex; gap:10px; }
+    .content { padding:32px; }
+
+    /* Panels */
+    .panel { display:none; }
+    .panel.active { display:block; }
+
+    /* Stats cards */
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:18px; margin-bottom:32px; }
+    .stat-card { background:var(--white); border-radius:var(--r); padding:22px; box-shadow:var(--shadow); border-left:4px solid var(--green); }
+    .stat-card.gold { border-left-color:var(--gold); }
+    .stat-card.red { border-left-color:var(--red); }
+    .stat-value { font-size:2rem; font-weight:700; color:var(--green); font-family:'Poppins',sans-serif; }
+    .stat-card.gold .stat-value { color:var(--gold); }
+    .stat-card.red .stat-value { color:var(--red); }
+    .stat-label { font-size:.82rem; color:var(--grey); margin-top:4px; }
+
+    /* Module header */
+    .module-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .module-title { display:flex; align-items:center; gap:12px; }
+    .module-title h2 { font-size:1.25rem; }
+    .module-badge { padding:5px 14px; border-radius:20px; font-size:.75rem; font-weight:700; text-transform:uppercase; }
+    .badge-mosquee { background:rgba(30,85,69,.1); color:var(--green); }
+    .badge-madrassah { background:rgba(90,62,40,.1); color:#7a5535; }
+
+    /* Annonces list */
+    .annonces-list { display:grid; gap:16px; }
+    .annonce-card {
+      background:var(--white); border-radius:var(--r); padding:22px 24px;
+      box-shadow:var(--shadow); border:1px solid var(--border);
+      display:grid; grid-template-columns:1fr auto; gap:16px; align-items:start;
+    }
+    .annonce-card.inactive { opacity:.55; }
+    .annonce-type-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:20px; font-size:.72rem; font-weight:700; text-transform:uppercase; margin-bottom:10px; }
+    .type-urgente  { background:#fff5f5; color:var(--red); }
+    .type-epinglee { background:#fffbf0; color:#b7791f; }
+    .type-actualite{ background:#f0fff4; color:#276749; }
+    .annonce-titre { font-family:'Poppins',sans-serif; font-weight:700; font-size:1.05rem; color:var(--text); margin-bottom:6px; }
+    .annonce-contenu { font-size:.9rem; color:var(--grey); line-height:1.6; white-space:pre-wrap; }
+    .annonce-img { width:100%; max-width:120px; border-radius:8px; object-fit:cover; height:80px; margin-top:10px; }
+    .annonce-meta { font-size:.78rem; color:#a0aec0; margin-top:10px; }
+    .annonce-actions { display:flex; flex-direction:column; gap:8px; min-width:110px; }
+    .btn-action { padding:8px 14px; border-radius:8px; font-size:.8rem; font-weight:700; cursor:pointer; border:none; transition:.2s; font-family:inherit; display:flex; align-items:center; gap:6px; justify-content:center; }
+    .btn-toggle { background:rgba(30,85,69,.08); color:var(--green); }
+    .btn-toggle:hover { background:var(--green); color:#fff; }
+    .btn-toggle.is-off { background:rgba(220,53,69,.08); color:var(--red); }
+    .btn-toggle.is-off:hover { background:var(--red); color:#fff; }
+    .btn-edit { background:rgba(197,160,89,.1); color:#b7791f; }
+    .btn-edit:hover { background:var(--gold); color:#fff; }
+    .btn-delete { background:rgba(220,53,69,.08); color:var(--red); }
+    .btn-delete:hover { background:var(--red); color:#fff; }
+
+    /* Empty state */
+    .empty-state { text-align:center; padding:60px 20px; color:var(--grey); }
+    .empty-state i { font-size:3rem; opacity:.25; margin-bottom:16px; }
+    .empty-state p { font-size:.95rem; }
+
+    /* Form modal */
+    .modal-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,.5);
+      z-index:500; display:none; align-items:center; justify-content:center;
+      padding:20px;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal {
+      background:var(--white); border-radius:20px; width:100%; max-width:640px;
+      max-height:90vh; overflow-y:auto; box-shadow:0 25px 60px rgba(0,0,0,.2);
+    }
+    .modal-head {
+      padding:24px 28px; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:#fff; z-index:1;
+    }
+    .modal-head h3 { font-size:1.15rem; color:var(--green); }
+    .modal-close { background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--grey); padding:4px 8px; border-radius:8px; transition:.2s; }
+    .modal-close:hover { background:var(--bg); color:var(--text); }
+    .modal-body { padding:28px; }
+    .field { margin-bottom:20px; }
+    .field label { display:block; font-size:.82rem; font-weight:700; color:var(--grey); margin-bottom:7px; text-transform:uppercase; letter-spacing:.4px; }
+    .field input, .field select, .field textarea {
+      width:100%; padding:12px 15px; border:2px solid var(--border);
+      border-radius:var(--r); font-size:.95rem; font-family:inherit;
+      color:var(--text); transition:.25s; outline:none; background:#fff;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color:var(--green); }
+    .field textarea { resize:vertical; min-height:130px; line-height:1.6; }
+    .field-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .field-hint { font-size:.78rem; color:var(--grey); margin-top:5px; }
+
+    /* Image upload */
+    .image-upload-zone {
+      border:2px dashed var(--border); border-radius:var(--r); padding:24px;
+      text-align:center; cursor:pointer; transition:.2s;
+    }
+    .image-upload-zone:hover { border-color:var(--green); background:rgba(30,85,69,.02); }
+    .image-upload-zone i { font-size:2rem; color:var(--gold); margin-bottom:10px; }
+    .image-upload-zone p { font-size:.88rem; color:var(--grey); }
+    .image-preview { width:100%; max-height:200px; object-fit:cover; border-radius:var(--r); margin-top:14px; display:none; }
+    #file-input { display:none; }
+
+    /* Couleur picker */
+    .couleur-picker { display:flex; gap:10px; }
+    .couleur-opt { flex:1; padding:10px; border-radius:10px; border:2px solid transparent; cursor:pointer; text-align:center; font-size:.82rem; font-weight:700; transition:.2s; }
+    .couleur-opt.rouge { background:#fff5f5; color:var(--red); }
+    .couleur-opt.orange { background:#fff8f0; color:var(--orange); }
+    .couleur-opt.vert { background:#f0fff4; color:var(--teal); }
+    .couleur-opt.selected { border-color:currentColor; }
+
+    /* Toggle switch */
+    .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--bg); border-radius:var(--r); }
+    .toggle-row label { font-size:.9rem; font-weight:600; }
+    .toggle { position:relative; display:inline-block; width:50px; height:26px; }
+    .toggle input { opacity:0; width:0; height:0; }
+    .slider { position:absolute; inset:0; background:#cbd5e0; border-radius:26px; transition:.3s; cursor:pointer; }
+    .slider::before { content:''; position:absolute; width:20px; height:20px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.3s; }
+    input:checked + .slider { background:var(--green); }
+    input:checked + .slider::before { transform:translateX(24px); }
+
+    /* Modal footer */
+    .modal-foot { padding:20px 28px; border-top:1px solid var(--border); display:flex; gap:12px; justify-content:flex-end; position:sticky; bottom:0; background:#fff; }
+    .btn-cancel { padding:11px 22px; background:var(--bg); color:var(--grey); border:none; border-radius:var(--r); font-family:inherit; font-weight:600; cursor:pointer; font-size:.9rem; }
+    .btn-cancel:hover { background:var(--border); }
+    .btn-save { padding:11px 26px; background:linear-gradient(135deg,var(--green),var(--green-l)); color:#fff; border:none; border-radius:var(--r); font-family:'Poppins',sans-serif; font-weight:700; cursor:pointer; font-size:.9rem; display:flex; align-items:center; gap:8px; }
+    .btn-save:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(30,85,69,.3); }
+    .btn-save:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+
+    /* New button */
+    .btn-new { padding:11px 20px; background:linear-gradient(135deg,var(--green),var(--green-l)); color:#fff; border:none; border-radius:var(--r); font-family:'Poppins',sans-serif; font-weight:700; cursor:pointer; font-size:.88rem; display:flex; align-items:center; gap:8px; box-shadow:0 4px 15px rgba(30,85,69,.25); transition:.2s; }
+    .btn-new:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(30,85,69,.35); }
+
+    /* Toast */
+    .toast { position:fixed; bottom:28px; right:28px; background:var(--green); color:#fff; padding:14px 22px; border-radius:var(--r); font-weight:600; font-size:.9rem; display:none; z-index:999; box-shadow:var(--shadow); animation:slideUp .3s ease; }
+    .toast.error { background:var(--red); }
+    @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:none;opacity:1} }
+
+    /* Loading */
+    .loading { display:flex; align-items:center; justify-content:center; padding:40px; gap:12px; color:var(--grey); }
+    .spinner { width:22px; height:22px; border:3px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:spin .7s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+
+    /* Couleur badge urgente */
+    .urgente-rouge { border-left:4px solid var(--red); }
+    .urgente-orange { border-left:4px solid var(--orange); }
+    .urgente-vert { border-left:4px solid var(--teal); }
+
+    .overview-modules-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+    /* Responsive */
+    @media(max-width:768px) {
+      .sidebar { width:100%; height:auto; position:relative; }
+      .main { margin-left:0; }
+      .annonce-card { grid-template-columns:1fr; }
+      .overview-modules-grid { grid-template-columns:1fr; }
+      .annonce-actions { flex-direction:row; }
+      .field-row { grid-template-columns:1fr; }
+      .content { padding:20px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ LOGIN ═══════════════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <img src="https://i.ibb.co/35sHFxJZ/Chat-GPT-Image-Jan-1-2026-08-58-31-PM-removebg-preview.png" alt="Logo" class="login-logo">
+    <h1>Espace Administration</h1>
+    <p>Mosquée El Mohsinine — Canteleu</p>
+    <div class="login-error" id="login-error"></div>
+    <div class="form-group">
+      <label>Adresse email</label>
+      <input type="email" id="login-email" placeholder="votre@email.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label>Mot de passe</label>
+      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn-login" id="btn-login">
+      <i class="fas fa-sign-in-alt" style="margin-right:8px;"></i>Se connecter
+    </button>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ════════════════════════════════════════════════ -->
+<div id="dashboard">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="https://i.ibb.co/35sHFxJZ/Chat-GPT-Image-Jan-1-2026-08-58-31-PM-removebg-preview.png" alt="Logo">
+      <h2>Administration</h2>
+      <p id="sidebar-subtitle">Mosquée El Mohsinine</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">Tableau de bord</div>
+      <a data-panel="overview" class="active">
+        <i class="fas fa-chart-pie"></i> Vue d'ensemble
+      </a>
+
+      <div class="nav-section nav-mosquee-section">Mosquée</div>
+      <a data-panel="mosquee" class="nav-mosquee-link">
+        <i class="fas fa-mosque"></i> Annonces Mosquée
+      </a>
+
+      <div class="nav-section nav-madrassah-section">Madrassah</div>
+      <a data-panel="madrassah" class="nav-madrassah-link">
+        <i class="fas fa-graduation-cap"></i> Annonces Madrassah
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="user-info">
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+        <div>
+          <div class="user-name" id="user-name-display">—</div>
+          <div class="user-role" id="user-role-display">—</div>
+        </div>
+      </div>
+      <button class="btn-logout" id="btn-logout">
+        <i class="fas fa-sign-out-alt" style="margin-right:7px;"></i>Se déconnecter
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <h1 id="topbar-title">Vue d'ensemble</h1>
+      <div class="topbar-actions">
+        <a href="index.html" target="_blank" style="display:flex;align-items:center;gap:7px;padding:9px 16px;background:rgba(30,85,69,.08);color:var(--green);border-radius:10px;font-size:.85rem;font-weight:600;">
+          <i class="fas fa-external-link-alt"></i> Voir le site
+        </a>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Panel : Vue d'ensemble -->
+      <div class="panel active" id="panel-overview">
+        <div class="stats-grid" id="stats-grid">
+          <div class="loading"><div class="spinner"></div> Chargement…</div>
+        </div>
+        <div class="overview-modules-grid" id="overview-modules"></div>
+      </div>
+
+      <!-- Panel : Mosquée -->
+      <div class="panel" id="panel-mosquee">
+        <div class="module-header">
+          <div class="module-title">
+            <i class="fas fa-mosque" style="font-size:1.4rem;color:var(--green);"></i>
+            <h2>Annonces — Mosquée</h2>
+            <span class="module-badge badge-mosquee">Mosquée</span>
+          </div>
+          <button class="btn-new" id="btn-new-mosquee">
+            <i class="fas fa-plus"></i> Nouvelle annonce
+          </button>
+        </div>
+        <div class="annonces-list" id="list-mosquee">
+          <div class="loading"><div class="spinner"></div> Chargement…</div>
+        </div>
+      </div>
+
+      <!-- Panel : Madrassah -->
+      <div class="panel" id="panel-madrassah">
+        <div class="module-header">
+          <div class="module-title">
+            <i class="fas fa-graduation-cap" style="font-size:1.4rem;color:#7a5535;"></i>
+            <h2>Annonces — Madrassah</h2>
+            <span class="module-badge badge-madrassah">Madrassah</span>
+          </div>
+          <button class="btn-new" id="btn-new-madrassah" style="background:linear-gradient(135deg,#7a5535,#9a6b45);">
+            <i class="fas fa-plus"></i> Nouvelle annonce
+          </button>
+        </div>
+        <div class="annonces-list" id="list-madrassah">
+          <div class="loading"><div class="spinner"></div> Chargement…</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL : Formulaire annonce ══════════════════════════════ -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-title">Nouvelle annonce</h3>
+      <button class="modal-close" id="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+
+      <div class="field">
+        <label>Type d'annonce</label>
+        <select id="form-type">
+          <option value="actualite">📰 Actualité</option>
+          <option value="epinglee">📌 Message épinglé</option>
+          <option value="urgente">🚨 Annonce urgente</option>
+        </select>
+      </div>
+
+      <!-- Couleur (visible seulement pour urgente) -->
+      <div class="field" id="field-couleur" style="display:none;">
+        <label>Couleur du bandeau</label>
+        <div class="couleur-picker">
+          <div class="couleur-opt rouge selected" data-couleur="rouge">🔴 Urgent</div>
+          <div class="couleur-opt orange" data-couleur="orange">🟠 Important</div>
+          <div class="couleur-opt vert" data-couleur="vert">🟢 Info</div>
+        </div>
+      </div>
+
+      <div class="field" id="field-titre">
+        <label>Titre</label>
+        <input type="text" id="form-titre" placeholder="Titre de l'annonce…">
+      </div>
+
+      <div class="field">
+        <label>Contenu <span style="color:var(--red);">*</span></label>
+        <textarea id="form-contenu" placeholder="Rédigez votre message ici…"></textarea>
+        <div class="field-hint">Conseils : soyez clair et concis. Le texte s'affichera tel quel sur le site.</div>
+      </div>
+
+      <!-- Image upload -->
+      <div class="field">
+        <label>Image <span style="color:var(--grey);font-weight:400;">(optionnelle)</span></label>
+        <div class="image-upload-zone" id="upload-zone">
+          <i class="fas fa-image"></i>
+          <p>Cliquez pour choisir une image<br><span style="font-size:.78rem;opacity:.7;">JPG, PNG, WebP — max 5 Mo</span></p>
+        </div>
+        <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp">
+        <img src="" alt="Aperçu" class="image-preview" id="image-preview">
+        <div style="margin-top:8px;display:none;" id="remove-img-wrap">
+          <button type="button" id="btn-remove-img" style="background:none;border:none;color:var(--red);font-size:.82rem;cursor:pointer;font-weight:600;"><i class="fas fa-trash" style="margin-right:5px;"></i>Supprimer l'image</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Date de péremption <span style="color:var(--grey);font-weight:400;">(optionnelle)</span></label>
+        <input type="datetime-local" id="form-expire">
+        <div class="field-hint">
+          <i class="fas fa-hourglass-half" style="color:var(--gold);margin-right:4px;"></i>
+          L'annonce sera automatiquement masquée après cette date. Laissez vide pour une durée illimitée.
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <label for="form-actif">Publier immédiatement</label>
+        <label class="toggle">
+          <input type="checkbox" id="form-actif" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" id="btn-cancel">Annuler</button>
+      <button class="btn-save" id="btn-save">
+        <i class="fas fa-check"></i> Enregistrer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ CONFIG SUPABASE ════════════════════════════════════════════
+const SUPABASE_URL = 'https://bejqwniucizvfxamnlyf.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_DllY8Q-udoVWolzg-4xxbQ_VSz-vYP3';
+
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ══ STATE ══════════════════════════════════════════════════════
+let currentUser = null;
+let currentRole = null;
+let currentModule = null; // 'mosquee' | 'madrassah'
+let editingId = null;
+let selectedCouleur = 'rouge';
+let uploadedImageUrl = null;
+
+// ══ UTILS ══════════════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+const show = id => $(id).style.display = '';
+const hide = id => $(id).style.display = 'none';
+
+function toast(msg, type='ok') {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type === 'error' ? ' error' : '');
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3500);
+}
+
+function formatDate(iso) {
+  return new Date(iso).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+
+function typeBadge(type) {
+  const map = {
+    urgente:   ['type-urgente',   '🚨 Urgente'],
+    epinglee:  ['type-epinglee',  '📌 Épinglée'],
+    actualite: ['type-actualite', '📰 Actualité'],
+  };
+  const [cls, label] = map[type] || ['type-actualite', type];
+  return `<span class="annonce-type-badge ${cls}">${label}</span>`;
+}
+
+// ══ AUTH ═══════════════════════════════════════════════════════
+async function getRole(email) {
+  const { data } = await sb.from('utilisateurs_roles').select('role,nom').eq('email', email).single();
+  return data || { role: 'mosquee', nom: email };
+}
+
+async function login() {
+  const email    = $('login-email').value.trim();
+  const password = $('login-password').value;
+  const errBox   = $('login-error');
+  errBox.style.display = 'none';
+
+  if (!email || !password) {
+    errBox.textContent = 'Veuillez remplir tous les champs.';
+    errBox.style.display = 'block';
+    return;
+  }
+
+  $('btn-login').textContent = 'Connexion…';
+  $('btn-login').disabled = true;
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    errBox.textContent = 'Email ou mot de passe incorrect.';
+    errBox.style.display = 'block';
+    $('btn-login').innerHTML = '<i class="fas fa-sign-in-alt" style="margin-right:8px;"></i>Se connecter';
+    $('btn-login').disabled = false;
+    return;
+  }
+
+  currentUser = data.user;
+  const roleData = await getRole(email);
+  currentRole = roleData.role;
+
+  initDashboard(roleData);
+}
+
+function initDashboard(roleData) {
+  $('login-screen').style.display = 'none';
+  $('dashboard').style.display = 'block';
+
+  // User info
+  $('user-name-display').textContent = roleData.nom || currentUser.email;
+  const roleLabels = { admin:'Administrateur', mosquee:'Bureau Mosquée', madrassah:'Madrassah' };
+  $('user-role-display').textContent = roleLabels[currentRole] || currentRole;
+
+  // Sidebar visibility selon rôle
+  const navMosquee    = document.querySelectorAll('.nav-mosquee-section, .nav-mosquee-link');
+  const navMadrassah  = document.querySelectorAll('.nav-madrassah-section, .nav-madrassah-link');
+
+  if (currentRole === 'mosquee') {
+    navMadrassah.forEach(el => el.style.display = 'none');
+  } else if (currentRole === 'madrassah') {
+    navMosquee.forEach(el => el.style.display = 'none');
+  }
+
+  loadOverview();
+  if (currentRole === 'mosquee')    loadList('mosquee');
+  if (currentRole === 'madrassah')  loadList('madrassah');
+  if (currentRole === 'admin') {
+    loadList('mosquee');
+    loadList('madrassah');
+  }
+}
+
+async function logout() {
+  await sb.auth.signOut();
+  location.reload();
+}
+
+// ══ NAVIGATION ═════════════════════════════════════════════════
+document.querySelectorAll('.sidebar-nav a').forEach(link => {
+  link.addEventListener('click', () => {
+    const panel = link.dataset.panel;
+    document.querySelectorAll('.sidebar-nav a').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    link.classList.add('active');
+    $(`panel-${panel}`)?.classList.add('active');
+    const titles = { overview:'Vue d\'ensemble', mosquee:'Annonces — Mosquée', madrassah:'Annonces — Madrassah' };
+    $('topbar-title').textContent = titles[panel] || '';
+  });
+});
+
+// ══ LOAD OVERVIEW ══════════════════════════════════════════════
+async function loadOverview() {
+  const grid = $('stats-grid');
+  const modules = $('overview-modules');
+
+  const [{ count: totalM }, { count: actifM }, { count: totalMad }, { count: actifMad }] = await Promise.all([
+    sb.from('annonces_mosquee').select('*', { count:'exact', head:true }),
+    sb.from('annonces_mosquee').select('*', { count:'exact', head:true }).eq('actif', true),
+    sb.from('annonces_madrassah').select('*', { count:'exact', head:true }),
+    sb.from('annonces_madrassah').select('*', { count:'exact', head:true }).eq('actif', true),
+  ]);
+
+  const showMosquee   = currentRole !== 'madrassah';
+  const showMadrassah = currentRole !== 'mosquee';
+
+  let statsHTML = '';
+  if (showMosquee) {
+    statsHTML += `
+      <div class="stat-card"><div class="stat-value">${totalM||0}</div><div class="stat-label"><i class="fas fa-mosque" style="color:var(--green);margin-right:5px;"></i>Publications Mosquée</div></div>
+      <div class="stat-card gold"><div class="stat-value">${actifM||0}</div><div class="stat-label"><i class="fas fa-eye" style="color:var(--gold);margin-right:5px;"></i>Publiées Mosquée</div></div>
+    `;
+  }
+  if (showMadrassah) {
+    statsHTML += `
+      <div class="stat-card" style="border-left-color:#7a5535;"><div class="stat-value" style="color:#7a5535;">${totalMad||0}</div><div class="stat-label"><i class="fas fa-graduation-cap" style="color:#7a5535;margin-right:5px;"></i>Publications Madrassah</div></div>
+      <div class="stat-card red"><div class="stat-value">${actifMad||0}</div><div class="stat-label"><i class="fas fa-eye" style="color:var(--red);margin-right:5px;"></i>Publiées Madrassah</div></div>
+    `;
+  }
+  grid.innerHTML = statsHTML;
+
+  // Dernières annonces preview
+  let overviewHTML = '';
+  if (showMosquee) {
+    const { data: lastM } = await sb.from('annonces_mosquee').select('*').order('created_at', { ascending:false }).limit(3);
+    overviewHTML += renderMiniList('mosquee', lastM);
+  }
+  if (showMadrassah) {
+    const { data: lastMad } = await sb.from('annonces_madrassah').select('*').order('created_at', { ascending:false }).limit(3);
+    overviewHTML += renderMiniList('madrassah', lastMad);
+  }
+  modules.innerHTML = overviewHTML;
+}
+
+function renderMiniList(module, items) {
+  const label = module === 'mosquee' ? 'Mosquée' : 'Madrassah';
+  const icon  = module === 'mosquee' ? 'fa-mosque' : 'fa-graduation-cap';
+  const color = module === 'mosquee' ? 'var(--green)' : '#7a5535';
+  let html = `
+    <div style="background:var(--white);border-radius:var(--r);padding:22px;box-shadow:var(--shadow);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <i class="fas ${icon}" style="color:${color};font-size:1.1rem;"></i>
+        <h3 style="font-size:1rem;color:${color};">Dernières — ${label}</h3>
+      </div>`;
+  if (!items?.length) {
+    html += `<p style="color:var(--grey);font-size:.88rem;text-align:center;padding:20px;">Aucune publication</p>`;
+  } else {
+    items.forEach(a => {
+      html += `
+        <div style="padding:10px 0;border-bottom:1px solid var(--border);">
+          ${typeBadge(a.type)}
+          ${a.expire_at ? `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;margin-left:6px;${new Date(a.expire_at) < new Date() ? 'background:#fff5f5;color:var(--red);' : 'background:#fff8f0;color:var(--orange);'}">
+            <i class="fas fa-hourglass-half"></i>
+            ${new Date(a.expire_at) < new Date() ? 'Expirée' : 'Exp. ' + new Date(a.expire_at).toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}
+          </span>` : ''}
+          <div style="font-weight:600;font-size:.9rem;color:var(--text);">${a.titre || a.contenu.substring(0,60)+'…'}</div>
+          <div style="font-size:.75rem;color:var(--grey);margin-top:3px;">${formatDate(a.created_at)} · ${a.actif ? '<span style="color:var(--teal);">Publié</span>' : '<span style="color:var(--grey);">Inactif</span>'}</div>
+        </div>`;
+    });
+  }
+  html += `</div>`;
+  return html;
+}
+
+// ══ LOAD LIST ══════════════════════════════════════════════════
+async function loadList(module) {
+  const container = $(`list-${module}`);
+  container.innerHTML = '<div class="loading"><div class="spinner"></div> Chargement…</div>';
+
+  const table = `annonces_${module}`;
+  const { data, error } = await sb.from(table).select('*').order('created_at', { ascending:false });
+
+  if (error) {
+    container.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Erreur de chargement</p></div>`;
+    return;
+  }
+
+  if (!data?.length) {
+    container.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><p>Aucune annonce pour le moment.<br>Créez votre première publication !</p></div>`;
+    return;
+  }
+
+  container.innerHTML = data.map(a => renderCard(a, module)).join('');
+  attachCardEvents(module);
+}
+
+function renderCard(a, module) {
+  const borderClass = a.type === 'urgente' ? `urgente-${a.couleur||'rouge'}` : '';
+  return `
+    <div class="annonce-card ${a.actif ? '' : 'inactive'} ${borderClass}" data-id="${a.id}">
+      <div>
+        ${typeBadge(a.type)}
+        ${a.titre ? `<div class="annonce-titre">${a.titre}</div>` : ''}
+        <div class="annonce-contenu">${a.contenu}</div>
+        ${a.image_url ? `<img src="${a.image_url}" alt="" class="annonce-img">` : ''}
+        <div class="annonce-meta">
+          <i class="fas fa-clock" style="margin-right:5px;"></i>${formatDate(a.created_at)}
+          · ${a.actif ? '<span style="color:var(--teal);font-weight:700;">✓ Publié</span>' : '<span style="color:var(--grey);">Inactif</span>'}
+          ${a.expire_at ? `· <span style="${new Date(a.expire_at) < new Date() ? 'color:var(--red);' : 'color:var(--orange);'}font-weight:700;">
+            <i class="fas fa-hourglass-half" style="margin-right:3px;"></i>
+            ${new Date(a.expire_at) < new Date() ? 'Expirée' : 'Expire le ' + formatDate(a.expire_at)}
+          </span>` : ''}
+        </div>
+      </div>
+      <div class="annonce-actions">
+        <button class="btn-action btn-toggle ${a.actif ? '' : 'is-off'}" data-id="${a.id}" data-actif="${a.actif}" data-module="${module}">
+          <i class="fas ${a.actif ? 'fa-eye-slash' : 'fa-eye'}"></i>
+          ${a.actif ? 'Désactiver' : 'Activer'}
+        </button>
+        <button class="btn-action btn-edit" data-id="${a.id}" data-module="${module}">
+          <i class="fas fa-pen"></i> Modifier
+        </button>
+        <button class="btn-action btn-delete" data-id="${a.id}" data-module="${module}">
+          <i class="fas fa-trash"></i> Supprimer
+        </button>
+      </div>
+    </div>`;
+}
+
+function attachCardEvents(module) {
+  // Toggle actif
+  document.querySelectorAll(`#list-${module} .btn-toggle`).forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id    = btn.dataset.id;
+      const actif = btn.dataset.actif === 'true';
+      const { error } = await sb.from(`annonces_${module}`).update({ actif: !actif }).eq('id', id);
+      if (error) return toast('Erreur lors de la mise à jour', 'error');
+      toast(actif ? 'Annonce désactivée' : 'Annonce publiée');
+      loadList(module);
+      loadOverview();
+    });
+  });
+
+  // Edit
+  document.querySelectorAll(`#list-${module} .btn-edit`).forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      const { data } = await sb.from(`annonces_${module}`).select('*').eq('id', id).single();
+      if (data) openModal(module, data);
+    });
+  });
+
+  // Delete
+  document.querySelectorAll(`#list-${module} .btn-delete`).forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Supprimer cette annonce définitivement ?')) return;
+      const id = btn.dataset.id;
+      const { error } = await sb.from(`annonces_${module}`).delete().eq('id', id);
+      if (error) return toast('Erreur lors de la suppression', 'error');
+      toast('Annonce supprimée');
+      loadList(module);
+      loadOverview();
+    });
+  });
+}
+
+// ══ MODAL ══════════════════════════════════════════════════════
+function openModal(module, data = null) {
+  currentModule = module;
+  editingId = data?.id || null;
+  uploadedImageUrl = data?.image_url || null;
+
+  $('modal-title').textContent = data ? 'Modifier l\'annonce' : 'Nouvelle annonce';
+  $('form-type').value    = data?.type    || 'actualite';
+  $('form-titre').value   = data?.titre   || '';
+  $('form-contenu').value = data?.contenu || '';
+  $('form-actif').checked = data ? data.actif : true;
+
+  // Date de péremption
+  if (data?.expire_at) {
+    // Format pour datetime-local : "YYYY-MM-DDTHH:MM"
+    const d = new Date(data.expire_at);
+    const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+      .toISOString().slice(0, 16);
+    $('form-expire').value = local;
+  } else {
+    $('form-expire').value = '';
+  }
+
+  // Couleur
+  selectedCouleur = data?.couleur || 'rouge';
+  document.querySelectorAll('.couleur-opt').forEach(el => {
+    el.classList.toggle('selected', el.dataset.couleur === selectedCouleur);
+  });
+
+  // Image preview
+  const preview = $('image-preview');
+  const removeWrap = $('remove-img-wrap');
+  if (uploadedImageUrl) {
+    preview.src = uploadedImageUrl;
+    preview.style.display = 'block';
+    removeWrap.style.display = 'block';
+  } else {
+    preview.src = '';
+    preview.style.display = 'none';
+    removeWrap.style.display = 'none';
+  }
+  $('file-input').value = '';
+
+  toggleFieldType($('form-type').value);
+  $('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  $('modal-overlay').classList.remove('open');
+  editingId = null;
+  uploadedImageUrl = null;
+}
+
+function toggleFieldType(type) {
+  $('field-couleur').style.display = type === 'urgente' ? 'block' : 'none';
+  $('field-titre').style.display   = type === 'urgente' ? 'none'  : 'block';
+}
+
+$('form-type').addEventListener('change', e => toggleFieldType(e.target.value));
+
+// Couleur picker
+document.querySelectorAll('.couleur-opt').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.couleur-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedCouleur = el.dataset.couleur;
+  });
+});
+
+// Upload image
+$('upload-zone').addEventListener('click', () => $('file-input').click());
+$('file-input').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) return toast('Image trop lourde (max 5 Mo)', 'error');
+
+  const ext  = file.name.split('.').pop();
+  const path = `annonces/${Date.now()}.${ext}`;
+
+  $('btn-save').disabled = true;
+  $('btn-save').innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;"></div> Upload…';
+
+  const { error: uploadError } = await sb.storage.from('image').upload(path, file, { upsert: true });
+  if (uploadError) {
+    toast('Erreur upload image', 'error');
+    $('btn-save').disabled = false;
+    $('btn-save').innerHTML = '<i class="fas fa-check"></i> Enregistrer';
+    return;
+  }
+
+  const { data: { publicUrl } } = sb.storage.from('image').getPublicUrl(path);
+  uploadedImageUrl = publicUrl;
+
+  const preview = $('image-preview');
+  preview.src = publicUrl;
+  preview.style.display = 'block';
+  $('remove-img-wrap').style.display = 'block';
+  $('btn-save').disabled = false;
+  $('btn-save').innerHTML = '<i class="fas fa-check"></i> Enregistrer';
+  toast('Image uploadée');
+});
+
+$('btn-remove-img').addEventListener('click', () => {
+  uploadedImageUrl = null;
+  $('image-preview').src = '';
+  $('image-preview').style.display = 'none';
+  $('remove-img-wrap').style.display = 'none';
+  $('file-input').value = '';
+});
+
+// Save
+$('btn-save').addEventListener('click', async () => {
+  const type    = $('form-type').value;
+  const titre   = $('form-titre').value.trim();
+  const contenu = $('form-contenu').value.trim();
+  const actif   = $('form-actif').checked;
+
+  if (!contenu) {
+    toast('Le contenu est obligatoire', 'error');
+    return;
+  }
+
+  $('btn-save').disabled = true;
+  $('btn-save').innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;"></div> Enregistrement…';
+
+  const expireVal = $('form-expire').value;
+  const payload = {
+    type, contenu, actif,
+    titre:     titre || null,
+    image_url: uploadedImageUrl || null,
+    couleur:   type === 'urgente' ? selectedCouleur : null,
+    expire_at: expireVal ? new Date(expireVal).toISOString() : null,
+    updated_at: new Date().toISOString(),
+    created_by: currentUser?.email,
+  };
+
+  const table = `annonces_${currentModule}`;
+  let error;
+
+  if (editingId) {
+    ({ error } = await sb.from(table).update(payload).eq('id', editingId));
+  } else {
+    ({ error } = await sb.from(table).insert(payload));
+  }
+
+  $('btn-save').disabled = false;
+  $('btn-save').innerHTML = '<i class="fas fa-check"></i> Enregistrer';
+
+  if (error) {
+    toast('Erreur lors de l\'enregistrement', 'error');
+    return;
+  }
+
+  toast(editingId ? 'Annonce modifiée ✓' : 'Annonce publiée ✓');
+  closeModal();
+  loadList(currentModule);
+  loadOverview();
+});
+
+// ══ EVENTS ═════════════════════════════════════════════════════
+$('btn-login').addEventListener('click', login);
+$('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+$('btn-logout').addEventListener('click', logout);
+$('modal-close').addEventListener('click', closeModal);
+$('btn-cancel').addEventListener('click', closeModal);
+$('modal-overlay').addEventListener('click', e => { if (e.target === $('modal-overlay')) closeModal(); });
+$('btn-new-mosquee').addEventListener('click', () => openModal('mosquee'));
+$('btn-new-madrassah').addEventListener('click', () => openModal('madrassah'));
+
+// ══ INIT ═══════════════════════════════════════════════════════
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session?.user) {
+    currentUser = session.user;
+    const roleData = await getRole(session.user.email);
+    currentRole = roleData.role;
+    initDashboard(roleData);
+  }
+})();
+</script>
+</body>
+</html>
