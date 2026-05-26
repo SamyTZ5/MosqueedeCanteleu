@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mosquée El Mohsinine Canteleu — Site Officiel</title>
+  <meta name='description' content='Site officiel de la Mosquée El Mohsinine de Canteleu.'/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Montserrat:wght@400;500;600&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<div id="bandeau-urgente" style="display:none;"></div>
+<div class="top-bar">
+  <div class="container top-bar-container">
+    <a href="infos.html"><i class="fas fa-envelope"></i> Contactez-nous</a>
+    <a href="actus.html"><i class="fas fa-newspaper"></i> Actualités</a>
+    <a href="infos.html#don" class="highlight"><i class="fas fa-heart"></i> Faire un don</a>
+    <a href="admin.html" class="admin-link"><i class="fas fa-lock"></i> Admin</a>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="container header-container">
+    <nav class="nav-part nav-left">
+      <ul>
+        <li><a href="index.html"class='active'>Accueil</a></li>
+        <li><a href="mosquee.html">La mosquée</a></li>
+        <li><a href="culte.html">Le culte</a></li>
+        <li><a href="actus.html">Actualités</a></li>
+      </ul>
+    </nav>
+    <div class="logo-center">
+      <a href="index.html">
+        <img src="https://i.ibb.co/35sHFxJZ/Chat-GPT-Image-Jan-1-2026-08-58-31-PM-removebg-preview.png" alt="Logo Mosquée El Mohsinine">
+      </a>
+    </div>
+    <nav class="nav-part nav-right">
+      <ul>
+        <li><a href="madrassah.html">Madrassah</a></li>
+        <li><a href="activites.html">Activités</a></li>
+        <li><a href="partenaires.html">Partenaires</a></li>
+        <li><a href="infos.html">Infos pratiques</a></li>
+      </ul>
+    </nav>
+    <div class="burger-menu"><i class="fas fa-bars"></i></div>
+  </div>
+</header>
+
+<div class="mobile-nav-overlay" id="mobileNav">
+  <div class="close-menu" id="closeMenu"><i class="fas fa-times"></i></div>
+  <div class="mobile-nav-content">
+    <a href="index.html">Accueil</a>
+    <a href="mosquee.html">La mosquée</a>
+    <a href="culte.html">Le culte</a>
+    <a href="actus.html">Actualités</a>
+    <a href="madrassah.html">Madrassah</a>
+    <a href="activites.html">Activités</a>
+    <a href="partenaires.html">Partenaires</a>
+    <a href="infos.html">Infos pratiques</a>
+    <a href="mentions-legales.html">Mentions légales</a>
+    <a href="infos.html#don" class="btn-mobile-don">Faire un don</a>
+  </div>
+</div>
+
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-layout">
+    <div class="hero-img-col">
+      <img src="https://i.ibb.co/sdhJ8zYS/348147a77dfc0248b8f480e36b10400c-modified-removebg-preview.png" alt="Calligraphie" class="calligraphy-img">
+    </div>
+    <div class="hero-text-col">
+      <h1>Bienvenue</h1>
+      <p class="hero-subtitle">L'association musulmane cultuelle et culturelle de Canteleu vous souhaite la bienvenue sur son site officiel.</p>
+      <div class="hero-btns">
+        <a href="culte.html" class="btn btn-green"><i class="far fa-clock"></i> Horaires de prières</a>
+        <a href="mosquee.html" class="btn btn-transparent">Nous découvrir</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BANDEAU 1 : Deux modules CMS côte à côte -->
+<section style="background:#fff;padding:50px 0 30px;">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:14px;">
+      <div>
+        <span class="info-badge">Annonces</span>
+        <h2 style="margin-top:8px;">Informations & Communications</h2>
+      </div>
+      <a href="actus.html" class="btn btn-green" style="font-size:.82rem;">Toutes les actualités <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="cms-home-grid">
+      <div id="cms-mosquee">
+        <div class="cms-placeholder">
+          <div class="cms-icon"><i class="fas fa-mosque"></i></div>
+          <span class="cms-badge">Mosquée</span>
+          <h3>Annonces de la Mosquée</h3>
+          <p>Les annonces de l'AMCC apparaîtront ici.</p>
+        </div>
+      </div>
+      <div id="cms-madrassah">
+        <div class="cms-placeholder">
+          <div class="cms-icon"><i class="fas fa-graduation-cap"></i></div>
+          <span class="cms-badge cms-badge-madrassah">Madrassah</span>
+          <h3>Annonces de la Madrassah</h3>
+          <p>Les communications de la Madrassah apparaîtront ici.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BANDEAU 2 : Bienvenue + Horaires + Mawaqit -->
+<section style="background:var(--beige);padding:40px 0 60px;">
+  <div class="container">
+    <div class="home-cms-mawaqit-grid">
+
+      <!-- Gauche : texte + horaires Jumu'a -->
+      <div>
+        <span class="info-badge">Horaires de prières</span>
+        <h2 style="margin-top:10px;margin-bottom:16px;">Retrouvez nos horaires en temps réel</h2>
+        <p style="color:var(--grey);font-size:1rem;line-height:1.7;margin-bottom:28px;">
+          Consultez les horaires des cinq prières quotidiennes directement sur notre site, mis à jour automatiquement selon la position géographique de Canteleu.
+        </p>
+
+        <!-- Jumu'a -->
+        <div style="background:#fff;border-radius:14px;padding:24px;box-shadow:var(--sh-sm);border:1px solid rgba(0,0,0,.05);margin-bottom:18px;">
+          <h3 style="display:flex;align-items:center;gap:10px;margin-bottom:18px;font-size:1.05rem;">
+            <i class="fas fa-star-and-crescent" style="color:var(--gold);"></i> Prière du Vendredi (Jumu'a)
+          </h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div style="text-align:center;background:var(--beige);border-radius:10px;padding:16px;">
+              <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--grey);margin-bottom:6px;"><i class="far fa-snowflake" style="margin-right:5px;"></i>Hiver</div>
+              <div style="font-size:1.8rem;font-weight:900;color:var(--green);font-family:'Poppins',sans-serif;">13h00</div>
+              <div style="font-size:.78rem;color:var(--grey);margin-top:4px;">Début du discours</div>
+            </div>
+            <div style="text-align:center;background:var(--beige);border-radius:10px;padding:16px;">
+              <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--grey);margin-bottom:6px;"><i class="far fa-sun" style="margin-right:5px;"></i>Été</div>
+              <div style="font-size:1.8rem;font-weight:900;color:var(--green);font-family:'Poppins',sans-serif;">14h00</div>
+              <div style="font-size:.78rem;color:var(--grey);margin-top:4px;">Début du discours</div>
+            </div>
+          </div>
+        </div>
+
+        <a href="culte.html" class="btn btn-green" style="width:100%;justify-content:center;">
+          <i class="fas fa-mosque"></i> Tout sur le culte
+        </a>
+      </div>
+
+      <!-- Droite : Mawaqit -->
+      <div>
+        <iframe
+          src="https://mawaqit.net/fr/m/el-mohsinine-canteleu"
+          frameborder="0" scrolling="no"
+          style="width:100%;height:480px;border:none;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.1);display:block;">
+        </iframe>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PÔLES -->
+<section style="background:var(--beige);padding:40px 0 60px;">
+  <div class="container">
+    <h2 class="text-center" style="margin-bottom:10px;">Nos Pôles d'Activités</h2>
+    <p class="text-center" style="color:var(--grey);margin-bottom:45px;">Au service de la communauté de Canteleu</p>
+    <div class="cards-grid-3">
+      <a href="culte.html" class="card-link">
+        <div class="feature-card">
+          <div class="icon-circle"><i class="fas fa-quran"></i></div>
+          <h3>Le Culte</h3>
+          <p>Les 5 prières quotidiennes, la Jumu'a et les Tarawih du Ramadan.</p>
+        </div>
+      </a>
+      <a href="madrassah.html" class="card-link">
+        <div class="feature-card">
+          <div class="icon-circle"><i class="fas fa-graduation-cap"></i></div>
+          <h3>Madrassah</h3>
+          <p>Enseignement de l'arabe, du Coran et des sciences islamiques pour tous.</p>
+        </div>
+      </a>
+      <a href="activites.html" class="card-link">
+        <div class="feature-card">
+          <div class="icon-circle"><i class="fas fa-users"></i></div>
+          <h3>Social & Activités</h3>
+          <p>Solidarité, conférences, jeunesse et accompagnement des familles.</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- DON -->
+<section class="donation-band">
+  <div class="container donation-flex">
+    <div class="donation-text">
+      <h3>Vous souhaitez effectuer un don ?</h3>
+      <p>Votre soutien est essentiel pour maintenir la mosquée et servir la communauté.</p>
+    </div>
+    <a href="infos.html#don" class="btn btn-white">FAIRE UN DON <i class="fas fa-arrow-right"></i></a>
+  </div>
+</section>
+
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-col">
+      <h3>À propos</h3>
+      <p>Mosquée El Mohsinine de Canteleu.<br>Lieu de culte, d'échange et de fraternité.</p>
+      <img src="https://i.ibb.co/35sHFxJZ/Chat-GPT-Image-Jan-1-2026-08-58-31-PM-removebg-preview.png" alt="Logo" style="width:90px;opacity:.8;margin-top:18px;">
+    </div>
+    <div class="footer-col">
+      <h3>Contactez-nous</h3>
+      <ul>
+        <li><i class="fas fa-phone-alt"></i> 06 68 72 19 26</li>
+        <li><i class="fas fa-envelope"></i> mosquee.amcc@gmail.com</li>
+        <li><i class="fas fa-map-marker-alt"></i> 34 Anc. Rte de Duclair G,<br>76380 Canteleu</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Liens rapides</h3>
+      <ul>
+        <li><a href="infos.html#don">Faire un don</a></li>
+        <li><a href="culte.html">Horaires de prières</a></li>
+        <li><a href="madrassah.html">Madrassah</a></li>
+        <li><a href="mentions-legales.html">Mentions légales</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 AMCC – Mosquée El Mohsinine Canteleu. Tous droits réservés.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+<script src="cms.js"></script>
+</body>
+</html>
