@@ -1,50 +1,48 @@
-// AMCC - Unified scripts (reveal, sticky header, mobile nav)
+// AMCC — Mosquée El Mohsinine Canteleu — script.js v4.0
 (() => {
   "use strict";
 
-  // Scroll reveal
-  const revealElements = document.querySelectorAll(".reveal");
-  if (revealElements.length) {
-    const revealObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) entry.target.classList.add("active");
-        });
-      },
-      { threshold: 0.15 }
-    );
-    revealElements.forEach((el) => revealObserver.observe(el));
-  }
+  document.addEventListener("DOMContentLoaded", () => {
 
-  // Header scroll effect
-  const header = document.querySelector(".site-header");
-  if (header) {
-    const onScroll = () => {
-      if (window.scrollY > 50) header.classList.add("scrolled");
-      else header.classList.remove("scrolled");
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-  }
+    // ── Header scroll ──
+    const header = document.querySelector(".site-header");
+    if (header) {
+      const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 50);
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+    }
 
-  // Mobile menu
-  const burgerMenu = document.querySelector(".burger-menu");
-  const mobileNav = document.getElementById("mobileNav");
-  const closeMenu = document.getElementById("closeMenu");
+    // ── Mobile nav ──
+    const burger    = document.querySelector(".burger-menu");
+    const mobileNav = document.getElementById("mobileNav");
+    const closeBtn  = document.getElementById("closeMenu");
+    const open  = () => mobileNav?.classList.add("active");
+    const close = () => mobileNav?.classList.remove("active");
+    burger?.addEventListener("click", open);
+    closeBtn?.addEventListener("click", close);
+    document.querySelectorAll(".mobile-nav-content a").forEach(a => a.addEventListener("click", close));
+    document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
 
-  const openNav = () => mobileNav && mobileNav.classList.add("active");
-  const closeNav = () => mobileNav && mobileNav.classList.remove("active");
+    // ── Scroll reveal ──
+    const reveals = document.querySelectorAll(".reveal");
+    if (reveals.length) {
+      const obs = new IntersectionObserver(
+        entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("active"); }),
+        { threshold: 0.08 }
+      );
+      reveals.forEach(el => obs.observe(el));
+    }
 
-  if (burgerMenu && mobileNav) burgerMenu.addEventListener("click", openNav);
-  if (closeMenu && mobileNav) closeMenu.addEventListener("click", closeNav);
+    // ── Tabs ──
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const target = btn.dataset.tab;
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(target)?.classList.add("active");
+      });
+    });
 
-  // Close on link click
-  document.querySelectorAll(".mobile-nav-content a").forEach((link) => {
-    link.addEventListener("click", closeNav);
-  });
-
-  // Close on ESC
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeNav();
   });
 })();
